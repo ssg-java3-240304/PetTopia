@@ -1,0 +1,21 @@
+# profile관리
+spring:
+  profiles:
+    default: test
+#    active: prod
+
+logging:
+  level:
+    root: info
+    com.sh: debug
+
+  # 공통 jpa 설정
+  jpa:
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
+        show_sql: true
+        hbm2ddl:
+          auto: none
+

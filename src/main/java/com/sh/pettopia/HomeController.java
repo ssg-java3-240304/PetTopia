@@ -37,6 +37,7 @@ public class HomeController {
     @GetMapping("/contact")
     public void contact(){
     }
+
     @GetMapping("/about")
     public void about(){
     }

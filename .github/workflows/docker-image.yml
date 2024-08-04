@@ -9,7 +9,7 @@ on:
 jobs:
   # 1. CI - 통합(build) 
   build:
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     steps:
     # 저장소의 커밋된 master브랜치 내려받기
@@ -64,7 +64,6 @@ jobs:
           -e "PROD_DB_PASSWORD=${{ secrets.PROD_DB_PASSWORD }}" \
           -e "NCP_ACCESS_KEY=${{ secrets.NCP_ACCESS_KEY }}" \
           -e "NCP_SECRET_KEY=${{ secrets.NCP_SECRET_KEY }}" \
-          
           --name ${{ vars.APP_NAME }} \
           ${{ secrets.DOCKER_USERNAME }}/${{ vars.APP_NAME }}
           sudo docker image prune -f

@@ -37,7 +37,7 @@ public class PayService {
         payParams.add("cancel_url", "http://localhost:8080/pay/cancel"); //결제 취소시 넘어갈 url
         payParams.add("fail_url", "http://localhost:8080/pay/fail"); //결제 실패시 넘어갈 url
 
-        HttpEntity<Map> requestEntity = new HttpEntity<>(payParams, this.getheaders());
+        HttpEntity<Map> requestEntity = new HttpEntity<>(payParams, this.getHeades());
         RestTemplate template = new RestTemplate();
         String url = "https://kapi.kakao.com/v1/payment/ready";
 
@@ -60,10 +60,9 @@ public class PayService {
         payParams.add("partner_user_id", "kakaopayTest"); //일단 아무값이나 hard coding.
         payParams.add("pg_token", pgToken);
 
-        HttpEntity<Map> requestEntity = new HttpEntity<>(payParams, this.getheaders());
+        HttpEntity<Map> requestEntity = new HttpEntity<>(payParams, this.getHeades());
         RestTemplate template = new RestTemplate();
         String url = "https://kapi.kakao.com/v1/payment/approve";
-
         KakaoApproveResponse approveResponse = template.postForObject(
                 url,
                 requestEntity,
@@ -78,7 +77,7 @@ public class PayService {
         return approveResponse;
     }
 
-    private HttpHeaders getheaders() {
+    private HttpHeaders getHeades() {
         HttpHeaders headers = new HttpHeaders();
 
         String auth = "KakaoAK " + ADMIN_KEY;

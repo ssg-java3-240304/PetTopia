@@ -1,16 +1,17 @@
 package com.sh.pettopia.Hojji.pet.entity;
 
-import com.sh.pettopia.Hojji.user.member.entity.Member;
-import com.sh.pettopia.choipetsitter.entity.AvailablePetSize;
+import com.sh.pettopia.Hojji.common.Gender;
+import com.sh.pettopia.Hojji.member.entity.Member;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
-@Data
-@Setter(AccessLevel.PRIVATE)
-// ---- 위에 Data랑 Setter 태준 추가 08/07
 @Entity
 @Table(name = "tbl_pet")
 @NoArgsConstructor
@@ -32,7 +33,7 @@ public class Pet {
     private int age;
 
     @Column(nullable = false)
-    private PetSize size;
+    private int weight;
 
     @Column(name = "pet_gender", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -63,11 +64,4 @@ public class Pet {
     // 실종 상태를 변경하기 위함
     private PetStatus status;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member member;
-
-    @Column(nullable = false)
-    private String breed;
-    
 }

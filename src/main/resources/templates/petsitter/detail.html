@@ -6,8 +6,88 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>펫시터의 이름</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>예약 하기</title>
+    <link rel="stylesheet" href="https://cdn.mobiscroll.com/4.10.4/css/mobiscroll.min.css">
+    <script src="https://cdn.mobiscroll.com/4.10.4/js/mobiscroll.jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!--    flatdatepicker-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+
+    <!--    타임피커 필요한 스크립트-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+
+    <script src="https://code.jquery.com/jquery-3.2.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <style>
+        .selectTime {
+            width: 375px;
+            border-radius: 8px;
+            border: 1px solid #DFE3EA;
+            box-shadow: 1px 3px 7px rgba(0, 0, 0, 0.07);
+            padding-left: 32px;
+            padding-right: 32px;
+            padding-bottom: 32px;
+        }
+
+        input[type="number"] {
+            width: 3em;
+        }
+
+        .totalPrice {
+            margin-left: 5px;
+            margin-right: 5px;
+        }
+
+
+        img {
+            width: 150px;
+            height: 60px;
+            margin: 3%;
+        }
+
+        .petSize {
+            display: inline-block;
+            width: 150px;
+            height: 70px;
+            margin: 3%;
+        }
+
+        textarea {
+            width: 100%;
+            height: 7em;
+            border: 1px solid black;
+            resize: none;
+        }
+
+        .serviceList {
+            display: flex;
+            flex-wrap: wrap;
+            flex-direction: row
+        }
+
+        .serviceList > .service {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 200px;
+            height: 69px;
+        }
+
+        p {
+            font-size: 14px;
+            letter-spacing: -0.2px;
+            line-height: 20px;
+            color: #393C47;
+            margin-top: 38px
+
+        }
+    </style>
 </head>
 <body>
 
@@ -18,8 +98,9 @@
         <div class="container">
             <div class="row no-gutters slider-text align-items-end">
                 <div class="col-md-9 ftco-animate pb-5">
-                    <p class="breadcrumbs mb-2"><span class="mr-2"><a th:href="@{/}">Home <i
-                            class="ion-ios-arrow-forward"></i></a></span>
+                    <p class="breadcrumbs mb-2"><span class="mr-2">
+                        <a th:href="@{/}">Home
+                        <i class="ion-ios-arrow-forward"></i></a></span>
                         <span>펫시터
 							<i class="ion-ios-arrow-forward"></i>
 						</span>
@@ -29,13 +110,17 @@
             </div>
         </div>
     </section>
-    <div class="container">
+    <div class="container" th:object="${dto}">
         <div style="display: flex;">
             <div style="padding-right: 30px">
                 <h2>여기는 포트폴리오를 작성하는 공간입니다</h2>
                 <div style="display: flex">
-                    <h4>여기는 사용자의 사진이나 반려동물의 사진이 들어옵니다</h4>
-                    <h4>여기는 사용자의 이름이 들어옵니다</h4>
+                    <h4 th:text="${dto.getPetSitterId}" name="petSitterId">여기는 사용자의 이름이 들어옵니다</h4>
+                    <div style="overflow:scroll; width:500px; height:350px;">
+                        <div th:each="images,stat: ${dto.imageUrlList}">
+                            <img th:src="${images}" alt="" style="height: 400px; width: 350px">
+                        </div>
+                    </div>
                 </div>
                 <div style="padding: 5px">
                     <h4>여기는 자신의 자격증이나 기타 증명이 들어옵니다(대부분 자격증)</h4>
@@ -43,8 +128,50 @@
                         <img th:src="@{/images/License.PNG}" alt="증명서">
                     </div>
                     <div>
-                        <h4>여기는 펫시터가 가능한 기능들을 보여줍니다 아마 이것도 db로 관리해야 될 거 같습니다</h4>
-                        <img th:src="@{/images/petsitterfunc.PNG}" alt="가능한 기능">
+                        <p>소개 글</p>
+                        <p th:text="${dto.getMainIntroduce}"></p>
+                    </div>
+                    <div>
+                        <div class="serviceList">
+
+                            <div th:if="${petService.contains('everydayWalk')}" class="service">
+                                <img th:src="@{/images/availableService/everydaywalk.PNG}" alt="everydayWalk">
+                            </div>
+
+                            <div th:if="${petService.contains('olderPetWalk')}" class="service">
+                                <img th:src="@{/images/availableService/oldpetwalk.PNG}" alt="노견산책">
+                            </div>
+
+                            <div th:if="${petService.contains('youngerPetWalk')}" class="service">
+                                <img th:src="@{/images/availableService/youngerpetwalk.PNG}" alt="어린견산책">
+                            </div>
+
+                            <div th:if="${petService.contains('play')}" class="service">
+                                <img th:src="@{/images/availableService/play.PNG}" alt="실내놀이">
+                            </div>
+
+                            <div th:if="${petService.contains('firstAid')}" class="service">
+                                <img th:src="@{/images/availableService/firstaid.PNG}" alt="응급처리">
+                            </div>
+
+                            <div th:if="${petService.contains('walkPickup')}">
+                                <img th:src="@{/images/availableService/pickup.PNG}" alt="도보픽업">
+                            </div>
+
+                            <div th:if="${petService.contains('brush')}" class="service">
+                                <img th:src="@{/images/availableService/brush.PNG}" alt="모발관리">
+                            </div>
+
+                            <div th:if="${petService.contains('medicine')}" class="service">
+                                <img th:src="@{/images/availableService/medicine.PNG}" alt="약먹이기">
+                            </div>
+
+                            <div th:if="${petService.contains('longReservation')}" class="service">
+                                <img th:src="@{/images/availableService/longreservation.PNG}" alt="장기예약">
+                            </div>
+
+
+                        </div>
                     </div>
                 </div>
                 <div style="padding: 5px">
@@ -55,37 +182,124 @@
             </div>
 
             <div style="padding: 5px">
-                <h2>여기는 예약하기 위한 공간입니다</h2>
                 <div style="padding: 5px">
-                    <p>여기는 예약하기 위한 날짜가 들어옵니다</p>
                     <div>
-                        <div style="border: #0b0b0b 1px solid; margin: 10px;" class="align-content-end">
-                            <form action="">
+                        <div style="margin: 10px;" class="align-content-end">
+                            <form th:action="@{/petsitter/reservation}" method="post" id="reservationForm" >
+                                <label for="petSitterId" hidden="hidden">
+                                    <input type="text" name="petSitterId" id="petSitterId"
+                                           th:value="${dto.getPetSitterId}">
+                                </label>
                                 <div class="bo_w_tit write_div">
-                                    <div><span>언제 시터가 필요하신가요??</span></div>
-                                    <input style="align-content: flex-end" type="text" name="wr_2" value="" id="wr_2"
-                                           required class="frm_input full_input required datepicker" placeholder="시작날짜"
-                                           readonly>
-                                    <input type="text" name="wr_3" value="" id="wr_3" required
-                                           class="frm_input full_input required datepicker" placeholder="종료 날짜"
-                                           readonly>
+                                    <div class="selectTime">
+                                        <div><p>언제 시터가 필요하신가요??</p></div>
+                                        <div style="margin-top:20px;">
+                                            <div>
+                                                <p>예약날짜 : </p>
+                                                <label for="impossibleDays">
+                                                    <input type="text" th:value="${dto.impossibleDays}"
+                                                           id="impossibleDays"
+                                                           name="reservationDay" required/>
+                                                </label>
+                                            </div>
+                                            <div>
+                                                <label for="start">시작 시간</label>
+                                                <input type="text" id="start" placeholder="시간 선택"
+                                                       autocomplete="on"
+                                                       name="startTime" required readonly>
+                                            </div>
+                                            <div>
+                                                <label for="end">종료 시간</label>
+                                                <input type="text" id="end" placeholder="시간 선택" autocomplete="on"
+                                                       name="endTime"
+                                                       disabled required readonly>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label for="note"></label>
+                                            <p>기타 사항</p>
+                                            <input type="text" name="note" id="note" placeholder="예시 : 성격이 온순합니다"
+                                                   style="width: 100%">
+                                        </div>
+                                    </div>
+                                    <div class="selectTime" style=" display: inline-block;"
+                                         id="availablePetSize">
+
+                                        <div th:if="${petSize.contains('smallPet')}" class="petSize"
+                                             style="display: inline">
+                                            <label>
+                                                <input name="petSizeAndHowManyPets[0].petSize" value="소형견"
+                                                       hidden="hidden">
+                                            </label>
+                                            <div>
+                                                <img th:src="@{/images/availablePetSize/smallpet.PNG}" alt="소형견">
+                                                <label>
+                                                    <input type="number" name="petSizeAndHowManyPets[0].howManyPet"
+                                                           id="smallPet"
+                                                           min="0"
+                                                           value="0"
+                                                           oninput="calculateTotal()"/>
+                                                </label>
+                                            </div>
+                                            <p>45,000원</p>
+
+                                        </div>
+
+                                        <div th:if="${petSize.contains('middlePet')}" class="petSize"
+                                             style="display: inline">
+                                            <label>
+                                                <input name="petSizeAndHowManyPets[1].petSize" value="중형견"
+                                                       hidden="hidden"/>
+                                            </label>
+                                            <div>
+                                                <img th:src="@{/images/availablePetSize/middlepet.PNG}" alt="중형견">
+                                                <label>
+                                                    <input type="number" name="petSizeAndHowManyPets[1].howManyPet"
+                                                           id="middlePet"
+                                                           min="0"
+                                                           value="0"
+                                                           oninput="calculateTotal()"/>
+                                                </label>
+                                            </div>
+                                            <p>50,000원</p>
+
+                                        </div>
+
+                                        <div th:if="${petSize.contains('largePet')}" class="petSize"
+                                             style="display: inline">
+                                            <label>
+                                                <input name="petSizeAndHowManyPets[2].petSize" value="대형견"
+                                                       hidden="hidden">
+                                            </label>
+                                            <div>
+                                                <img th:src="@{/images/availablePetSize/largepet.PNG}" alt="대형견">
+                                                <label>
+                                                    <input type="number" name="petSizeAndHowManyPets[2].howManyPet"
+                                                           id="largePet"
+                                                           min="0"
+                                                           value="0"
+                                                           oninput="calculateTotal()"/>
+                                                </label>
+                                            </div>
+                                            <p>55,000원</p>
+
+                                        </div>
+
+                                    </div>
 
                                 </div>
+                                <input type="hidden" name="total_amount" id="totalPrice" value="0"/>
+                                <input type="hidden" name="item_name" id="item_name">
+                                <input type="hidden" name="quantity" id="total_PetCnt">
+                                <input type="hidden" name="partner_order_id" id="partner_order_id">
+                                <p id="totalCostDisplay">총 금액 : 0원</p>
 
+                                <div th:if="${#authentication.principal.member.email != dto.getPetSitterId}">
+                                    <button type="submit" id="btn-kakao">결제 및 예약</button>
+                                </div>
                             </form>
-                            <div>
-                                <button id="btn-kakao">예약 요청</button>
-                                <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-                            </div>
                         </div>
-                        <div>
-                            <p>가능한 애견</p>
-                            <img th:src="@{/images/pay.PNG}" alt="요금">
-                        </div>
-                        <div>
-                            <p>가능한 날짜</p>
-                            <img th:src="@{/images/possibledate.PNG}" alt="">
-                        </div>
+
 
                     </div>
                 </div>
@@ -93,52 +307,202 @@
         </div>
     </div>
     <script>
-            $("#btn-kakao").click(function() {
-                $.ajax({
-                    url: '/pay/ready',
-                    type: 'get',
-                    data: {
-                        item_name: '대형견',
-                        quantity: "1",
-                        total_amount: "70000",
-                        tax_free_amount: "0",
-                    },
-                    success: function(response) {
-                        console.log("결제완료 페이지입니다");
-                        alert(response.next_redirect_pc_url); //kakao payment api에서 알아서 응답해주는 url
-                        location.href  = response.next_redirect_pc_url; // 결제 페이지
-                    },
-                    error: function(xhr, err, status) {
-                        console.log(xhr.responseText);
-                        alert(err + "이(가) 발생했습니다: " + status);
-                    }
-                });
-            });
+
+        function calculateTotal() {
+            var total_PetCnt = document.getElementById('total_PetCnt');
+            var item_name = document.getElementById('item_name');
+
+            let smallPetCnt = parseInt(document.getElementById('smallPet').value) || 0;
+            let middlePetCnt = parseInt(document.getElementById('middlePet').value) || 0;
+            let largePetCnt = parseInt(document.getElementById('largePet').value) || 0;
+
+            // Calculate the total cost
+            const total = (smallPetCnt * 45000 + middlePetCnt * 50000 + largePetCnt * 55000);
+            let totalPetCnt = smallPetCnt + middlePetCnt + largePetCnt;
+
+            if (totalPetCnt > 6) {
+                alert('총 반려견 수는 6마리 이하이어야 합니다.');
+                smallPetCnt.value = 0;
+                middlePetCnt.value = 0;
+                largePetCnt.value = 0;
+            }
+
+            // 총합 출력
+            document.getElementById('totalCostDisplay').innerText = '총 금액 : ' + total.toLocaleString() + '원';
+            document.getElementById('totalPrice').value = total;
+
+            total_PetCnt.value = totalPetCnt;
+
+            if (smallPetCnt) {
+                item_name.value = "소형견"
+                if (middlePetCnt || largePetCnt) {
+                    item_name.value = "소형견 외..."
+                }
+            } else if (middlePetCnt) {
+                item_name.value = "중형견"
+                if (largePetCnt) {
+                    item_name.value = "중형견 외..."
+                }
+            } else
+                item_name.value = "대형견"
+
+        }
     </script>
-<!--    <script>-->
-<!--        jQuery(function ($) {-->
-<!--            $.datepicker.regional["ko"] = {-->
-<!--                closeText: "닫기",-->
-<!--                prevText: "이전달",-->
-<!--                nextText: "다음달",-->
-<!--                currentText: "오늘",-->
-<!--                monthNames: ["1월(JAN)", "2월(FEB)", "3월(MAR)", "4월(APR)", "5월(MAY)", "6월(JUN)", "7월(JUL)", "8월(AUG)", "9월(SEP)", "10월(OCT)", "11월(NOV)", "12월(DEC)"],-->
-<!--                monthNamesShort: ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"],-->
-<!--                dayNames: ["일", "월", "화", "수", "목", "금", "토"],-->
-<!--                dayNamesShort: ["일", "월", "화", "수", "목", "금", "토"],-->
-<!--                dayNamesMin: ["일", "월", "화", "수", "목", "금", "토"],-->
-<!--                weekHeader: "Wk",-->
-<!--                dateFormat: "yy-mm-dd",-->
-<!--                firstDay: 0,-->
-<!--                isRTL: false,-->
-<!--                showMonthAfterYear: true,-->
-<!--                yearSuffix: ""-->
-<!--            };-->
-<!--            $.datepicker.setDefaults($.datepicker.regional["ko"]);-->
-<!--            $("#wr_2").datepicker();-->
-<!--            $("#wr_3").datepicker();-->
-<!--        });-->
-<!--    </script>-->
+    <script>
+        function validateInput() {
+            // Get the values from the input fields
+            let smallPetValue = parseInt(document.getElementById('smallPet').value) || 0;
+            let middlePetValue = parseInt(document.getElementById('middlePet').value) || 0;
+            let largePetValue = parseInt(document.getElementById('largePet').value) || 0;
+
+            // Check if at least one of the values is greater than 0
+            if (smallPetValue > 0 || middlePetValue > 0 || largePetValue > 0) {
+                return true;  // Allow form submission
+            } else {
+                alert('최소 하나의 반려견 수를 입력해야 합니다.');
+                return false;  // Prevent form submission
+            }
+        }
+
+        // 예약 요청을 하기 전에 주문번호를 준다
+        const partner_order_id = document.getElementById('partner_order_id');
+        partner_order_id.value = Math.random().toString(36).substr(2, 16);
+
+        document.getElementById('petForm').onsubmit = function () {
+            return validateInput();
+        };
+    </script>
+    <script>
+        // start timepicker
+        $('#start').timepicker({
+            timeFormat: 'HH:mm',
+            interval: 60,
+            minTime: '10',
+            maxTime: '23:00',
+            startTime: '09:00',
+            dynamic: true,
+            dropdown: true,
+            scrollbar: true,
+            zindex: '9999999',
+            change: function (time) {
+                if (time) {
+                    // Enable the end time input
+                    $('#end').prop('disabled', false);
+
+                    // Add 1 hour to the start time
+                    let minEndTime = new Date(time.getTime() + (60 * 60 * 1000));  // Add 1 hour
+
+                    // Set minTime for the end timepicker
+                    $('#end').timepicker('option', 'minTime', minEndTime);
+                } else {
+                    $('#end').prop('disabled', true);
+                }
+
+            }
+
+        });
+        // End timepicker
+        $('#end').timepicker({
+            timeFormat: 'HH:mm',
+            interval: 60,
+            minTime: '11',
+            maxTime: '23:00',
+            dynamic: true,
+            dropdown: true,
+            scrollbar: true,
+        });
+    </script>
+
+    <!--    <script>-->
+
+
+    <!--        $("#btn-kakao").click(function () {-->
+    <!--            var reservationForm=document.getElementById('reservationForm');-->
+    <!--            const smallPetCnt = parseInt(document.getElementById('smallPet').value)-->
+    <!--            const middlePetCnt = parseInt(document.getElementById('middlePet').value)-->
+    <!--            const largePetCnt = parseInt(document.getElementById('largePet').value)-->
+    <!--            var item_name;-->
+    <!--            if(smallPetCnt)-->
+    <!--            {-->
+    <!--                item_name="소형견"-->
+    <!--                if(middlePetCnt || largePetCnt)-->
+    <!--                {-->
+    <!--                    item_name="소형견 외..."-->
+    <!--                }-->
+    <!--            }-->
+    <!--            else if(middlePetCnt)-->
+    <!--            {-->
+    <!--                item_name="중형견"-->
+    <!--                if(largePetCnt)-->
+    <!--                {-->
+    <!--                    item_name="중형견 외..."-->
+    <!--                }-->
+    <!--            }-->
+    <!--            else-->
+    <!--                item_name="대형견"-->
+
+    <!--            const totalPetCnt=smallPetCnt+middlePetCnt+largePetCnt;-->
+    <!--            const totalPrice = (smallPetCnt*45000 + middlePetCnt*50000 + largePetCnt*55000)-->
+
+    <!--            console.log("total : "+totalPrice, "totalPetCnt : "+totalPetCnt);-->
+    <!--            $.ajax({-->
+    <!--                url: '/petsitter/reservation',-->
+    <!--                type: 'post',-->
+    <!--                data: {-->
+    <!--                    reservationForm,-->
+    <!--                    item_name: item_name,-->
+    <!--                    quantity: totalPetCnt,-->
+    <!--                    total_amount: totalPrice,-->
+    <!--                    tax_free_amount: "0",-->
+    <!--                },-->
+    <!--                success: function (response) {-->
+    <!--                    console.log("결제 페이지입니다");-->
+    <!--                    alert(response.next_redirect_pc_url); //kakao payment api에서 알아서 응답해주는 url-->
+    <!--                    location.href = response.next_redirect_pc_url; // 결제 페이지-->
+    <!--                    // reservationForm.submit();-->
+    <!--                //-->
+    <!--                },-->
+    <!--                error: function (xhr, err, status) {-->
+    <!--                    console.log(xhr.responseText);-->
+    <!--                    alert(err + "이(가) 발생했습니다: " + status);-->
+    <!--                }-->
+    <!--            });-->
+    <!--        });-->
+    <!--    </script>-->
+    <script th:inline="javascript">
+
+        const impossibleDays = document.getElementById('impossibleDays');
+
+        var dates = [[${dto.impossibleDays}]];
+
+        flatpickr(impossibleDays, {
+            dateFormat: "Y-m-d", // 날짜 및 시간 형식 설정 (예: 2023-09-12 15:30)
+            enableTime: false,        // 시간 선택 활성화
+            time_24hr: false,         // 24시간 형식 사용
+            minDate: 'today',        // 오늘 이전 날짜 선택 비활성화
+            maxDate: new Date().fp_incr(92), // 30 days from now
+            // defaultDate: 'today',    // 초기 날짜 설정 (현재 날짜와 시간)
+            inline: true, // 상시 출력
+            clickOpens: true, // 클릭으로 달력 출력
+            // mode: "multiple", // 여러날 선택
+            disable: dates, // 특정 날짜 비활성화
+            locale: 'ko',            // 한국어로 지역화
+            onOpen: function (selectedDates, dateStr, instance) {
+                // 위젯이 열릴 때 실행할 코드
+            },
+            onClose: function (selectedDates, dateStr, instance) {
+                // 위젯이 닫힐 때 실행할 코드
+            },
+            onChange: function (selectedDates, dateStr, instance) {
+                // 날짜가 변경될 때 실행할 코드
+            },
+            disableMobile: true,      // 모바일 기기에서 위젯 비활성화
+            altInput: true,           // 추가 입력란 활성화
+            // altFormat: 'F j, Y H:i', // 추가 입력란의 날짜 및 시간 형식
+        });
+    </script>
+    <script src="https://npmcdn.com/flatpickr/dist/flatpickr.min.js"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 </main>
 </body>
 </html>

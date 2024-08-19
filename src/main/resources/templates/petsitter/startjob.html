@@ -12,6 +12,7 @@
 <div class="container" layout:fragment="main">
     <div>
         <button>
+            <span th:text="${#authentication.principal.member.name}"></span>
             <a th:href="@{/petsitter/registerprofile}">프로필 등록하기</a>
         </button>
 
@@ -19,6 +20,11 @@
     <div>
         <button>
             <a th:href="@{/petsitter/registerpost}">글 등록</a>
+        </button>
+    </div>
+    <div>
+        <button>
+            <a th:href="@{/petsitter/reservationlist}">예약 보기</a>
         </button>
     </div>
 </div>

@@ -1,84 +1,305 @@
 <!DOCTYPE html>
-<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org"
-      layout:decorate="~{layout/default}">
+<html layout:decorate="~{layout/default}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-    <title>주소 검색</title>
+    <title>주소 검색 및 예약 정보</title>
+    <!-- Bootstrap CSS 추가 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
-        /* 스타일은 필요에 따라 수정하세요 */
-        #map {
+        .page-body {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            width: 80%;
+            height: 1500px;
+            margin: 10px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .reservation-details {
+            width: 45%;
+            background: #d4edda;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .petProfile {
+            width: 40%;
+            text-align: center;
+        }
+
+        .petProfile img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .map-spot {
+            position: absolute;
+            width: 40%;
+            text-align: center;
+            bottom: 20px;
+            right: 20px;
+        }
+
+        .map-spot #map {
             width: 100%;
             height: 350px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-section {
+            width: 55%;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             margin-top: 10px;
+            height: auto;
+        }
+
+        .comment {
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .comment .comment-meta {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .comment .comment-content {
+            font-size: 1rem;
+        }
+
+        /* 헤더 스타일을 명시적으로 설정 */
+        .navbar, .navbar-nav, .nav-link, .navbar-brand {
+            background-color: #ffffff !important;
+            color: #000000 !important;
+        }
+
+        .nav-link {
+            color: #000000 !important;
+        }
+
+        .navbar-brand {
+            color: #000000 !important;
+        }
+
+        .navbar .nav-link:hover {
+            color: #28a745 !important; /* 예시로 녹색으로 설정 */
         }
     </style>
 </head>
 <body>
-<div layout:fragment="main" class="page-body">
-    <form id="addressForm">
-        <label for="addressInput">주소 입력: </label>
-        <input type="text" id="addressInput" placeholder="주소를 입력하세요">
-        <button type="submit" id="searchButton">검색</button>
-    </form>
-    <div id="map"></div>
 
-    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c2c4e06dc64e84c36fa8af04a0f00306&libraries=services"></script>
+<div class="page-body" layout:fragment="main">
+    <!-- 예약 정보 표시 영역 -->
+    <section class="reservation-details">
+        <input type="hidden" id="addressInput" th:value="${detail.address}">
+        <h2><strong>🐶우리 강아지를 돌봐주세요🐶</strong></h2>
+        <p>이름: <span th:text="${detail.petName}"></span></p>
+        <p>강아지 성격: <span th:text="${detail.petSociability}"></span></p>
+        <p>강아지 출생일: <span th:text="${detail.petBirth}"></span></p>
+        <p>견종: <span th:text="${detail.petBreed}"></span></p>
+        <p>강아지 크기: <span th:text="${detail.petSize}"></span></p>
+        <p>예방 접종: <span th:text="${detail.petVaccinationType}"></span></p>
+        <p>기생충 예방 접종: <span th:text="${detail.petParasitePrevention}"></span></p>
+        <p>예약 요청 날짜: <input type="date" th:value="${detail.startDate}" readonly></p>
+        <p>예약 종료요청 날짜: <input type="date" th:value="${detail.endDate}" readonly></p>
+        <p>예약 서비스: <span th:text="${detail.requestService}"></span></p>
+        <div class="update-box">
+            <button class="btn btn-primary" th:if="${isWriter}" th:onclick="|location.href = '@{/petsitterfinder/detailupdate(postId=${detail.postId})}'|">수정/삭제</button>
+            <input type="hidden" name ="sitterStatus" id ="sitterStatus" th:value="${memberInfo.sitterStatus}">
+            <button name= "requestBtn" id="requestBtn" class="btn btn-primary">예약요청</button>
+        </div>
+    </section>
+
+    <!-- 펫 프로필 영역 -->
+    <section class="petProfile">
+        <h2>☺️우리 강아지에요☺️</h2>
+        <img src="/images/KakaoTalk_20240527_201110282.jpg" alt="강아지 사진">
+    </section>
+
+    <!-- 지도 표시 영역 -->
+    <section class="map-spot">
+        <h2>🏠이 근처에 살아요🏠</h2>
+        <div id="map"></div>
+    </section>
+
+    <!-- 댓글 섹션 -->
+    <section class="comment-section">
+        <h3>댓글 작성</h3>
+        <div class="mb-3">
+            <textarea class="form-control" placeholder="댓글을 입력하세요..." id="commentContents" name="commentContents"></textarea>
+        </div>
+        <input type="hidden" name="commentWriter" id="commentWriter" th:value="${memberInfo.name}">
+        <input type="hidden" name="memberId" id="memberId" th:value="${memberInfo.id}">
+        <input type="hidden" name="memberEmail" id="memberEmail" th:value="${memberInfo.email}">
+
+        <button id="comment-write-btn" class="btn btn-success w-100" onclick="commentWrite()">댓글 작성</button>
+
+        <div id="comment-list" class="mt-4">
+            <!-- 여기에 댓글 목록이 동적으로 삽입됩니다 -->
+
+        </div>
+    </section>
+
     <script>
-        var mapContainer = document.getElementById('map'), // 지도를 표시할 div
-            mapOption = {
-                center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
-                level: 1 // 지도의 확대 레벨
-            };
-
-        // 지도를 생성합니다
-        var map = new kakao.maps.Map(mapContainer, mapOption);
-
-        // 주소-좌표 변환 객체를 생성합니다
-        var geocoder = new kakao.maps.services.Geocoder();
-
-        // 새로고침 방지하는 거 전체를 묶어줘야함
-        document.getElementById('addressForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // 폼 제출에 의한 페이지 새로고침 방지
-
-            var address = document.getElementById('addressInput').value; // 사용자 입력값 가져오기
-
-            // 주소로 좌표를 검색합니다
-            geocoder.addressSearch(address, function(result, status) {
-                // 정상적으로 검색이 완료됐으면
-                if (status === kakao.maps.services.Status.OK) {
-                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-
-                    // 결과값으로 받은 위치를 마커로 표시합니다
-                    var marker = new kakao.maps.Marker({
-                        map: map,
-                        position: coords
+        // 페이지 로드 시 댓글 목록을 가져오는 함수
+        const loadComments = () => {
+            const postId = [[${detail.postId}]];
+            $.ajax({
+                type: "get",
+                url: `/comment/list?postId=${postId}`,
+                success: function(res) {
+                    console.log("댓글 목록 로드 성공", res);
+                    let output = "";
+                    // list가 아닌 Page로 객체를 반환했을 때 forEach 바로 사용 못함
+                    // res.forEach -> res.content.forEach로 수정함
+                    res.content.forEach(comment => {
+                        output += `
+                            <div class="comment">
+                                <div class="comment-meta">
+                                    <strong>${comment.commentWriter}</strong> · ${comment.commentCreatedTime}
+                                </div>
+                                <div class="comment-content">
+                                    ${comment.commentContents}
+                                </div>
+                            </div>
+                        `;
                     });
-
-                    // 인포윈도우로 장소에 대한 설명을 표시합니다
-                    var infowindow = new kakao.maps.InfoWindow({
-                        content: '<div style="width:150px;text-align:center;padding:6px 0;">' + address + '</div>'
-                    });
-                    infowindow.open(map, marker);
-
-                    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-                    map.setCenter(coords);
-
-                    // 지도에 원을 표시합니다
-                    var circle = new kakao.maps.Circle({
-                        center: new kakao.maps.LatLng(result[0].y, result[0].x),  // 원의 중심좌표입니다
-                        radius: 30, // 미터 단위의 원의 반지름입니다
-                        strokeWeight: 5, // 선의 두께입니다
-                        strokeColor: '#75B8FA', // 선의 색깔입니다
-                        strokeOpacity: 1, // 선의 불투명도입니다 1에서 0 사이의 값이며 0에 가까울수록 투명합니다
-                        strokeStyle: 'dashed', // 선의 스타일입니다
-                        fillColor: '#CFE7FF', // 채우기 색깔입니다
-                        fillOpacity: 0.4  // 채우기 불투명도입니다
-                    });
-                    circle.setMap(map);
-                } else {
-                    alert('검색 결과가 없습니다.');
+                    document.getElementById('comment-list').innerHTML = output;
+                },
+                error: function(err) {
+                    console.log("댓글 목록 로드 실패", err);
                 }
             });
-        });
+        };
+
+        // 댓글 작성 함수
+        const commentWrite = () => {
+            const contents = document.getElementById("commentContents").value;
+            const writer = document.getElementById("commentWriter").value;
+            const memberId = document.getElementById("memberId").value;
+            const postId = [[${detail.postId}]];
+            $.ajax({
+                type: "post",
+                url: "/comment/save",
+                data: {
+                    "commentContents": contents,
+                    "commentWriter": writer,
+                    "memberId": memberId,
+                    "postId": postId
+                },
+                success: function(res) {
+                    console.log("요청 성공", res);
+                    loadComments(); // 댓글 작성 후 댓글 목록 다시 로드
+                    document.getElementById('commentContents').value = '';
+                },
+                error: function(err) {
+                    console.log("요청 실패", err);
+                }
+            });
+        };
+
+        // 페이지 로드 시 댓글 목록을 로드
+        document.addEventListener('DOMContentLoaded', loadComments);
+    </script>
+
+    <!-- Bootstrap JS 및 의존성 추가 -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- 카카오 맵 스크립트 -->
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=c2c4e06dc64e84c36fa8af04a0f00306&libraries=services"></script>
+    <script>
+        var mapContainer = document.getElementById('map'),
+            mapOption = {
+                center: new kakao.maps.LatLng(33.450701, 126.570667),
+                level: 2
+            };
+
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+        var geocoder = new kakao.maps.services.Geocoder();
+        var marker = new kakao.maps.Marker({ map: map });
+        var infowindow = new kakao.maps.InfoWindow();
+
+        function searchAddress() {
+            var address = document.getElementById('addressInput').value;
+
+            geocoder.addressSearch(address, function(result, status) {
+                if (status === kakao.maps.services.Status.OK) {
+                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                    marker.setPosition(coords);
+                    infowindow.setContent('<div style="width:150px;text-align:center;padding:6px 0;">' + address + '</div>');
+                    infowindow.open(map, marker);
+                    map.setCenter(coords);
+                } else {
+                    infowindow.close();
+                    marker.setMap(null);
+                }
+                var circle = new kakao.maps.Circle({
+                    center: new kakao.maps.LatLng(result[0].y, result[0].x),
+                    radius: 30,
+                    strokeWeight: 5,
+                    strokeColor: '#75B8FA',
+                    strokeOpacity: 1,
+                    strokeStyle: 'dashed',
+                    fillColor: '#CFE7FF',
+                    fillOpacity: 0.4
+                });
+                circle.setMap(map);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', searchAddress);
+    </script>
+
+<!--    sitterStatus가 approved되지 않은 회원은 예약 요청 거절됨. -->
+    <script>
+        const status = document.getElementById('sitterStatus').value;
+
+        document.getElementById('requestBtn').addEventListener('click', function (){
+            const sitterStatus = status
+            console.log(sitterStatus)
+
+            if(sitterStatus !== 'APPROVED'){
+                alert('펫시터 권한이 없는 회원은 예약 요청하실 수 없습니다.')
+            }else {
+
+                const confirmation =  confirm('예약을 요청하시겠습니까?')
+                if(confirmation){
+                // 스크립트에서 쿼리파라미터 요청
+                const postId = [[${detail.postId}]];
+                const memberEmail = '[[${memberInfo.email}]]' // 문자열 받을 때에는 따옴표 무조건 감싸줘야함 안감싸줘서 계속 오류났었네 이런!!
+
+                    $.ajax({
+                        type: "post",
+                        url: "/petsitterfinder/reservation",
+                        data:{
+                            "memberEmail":memberEmail,
+                            "postId":postId
+
+                        }
+                    })
+                }
+
+            }
+        })
+
     </script>
 </div>
 </body>

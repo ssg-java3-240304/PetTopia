@@ -6,24 +6,52 @@
     margin-bottom: 20px; /* 하단 여백 */
 }
 
-.hos_info h1 {
-    font-size: 24px;
-    color: #333; /* 제목 색상 */
+.hos_info {
+    position: relative; /* 상대적 위치 지정 */
+    width: 100%; /* 전체 너비 설정 */
+}
+
+.hos_info_top {
+    display: flex;
+    align-items: center;  /* 수평 정렬을 중앙으로 */
+    gap: 20px;  /* 요소 사이의 간격 */
+}
+
+.hos_info h2 {
+    font-family: 'Noto Sans KR', sans-serif; /* Noto Sans KR 글꼴 적용 */
+    font-weight: 500; /* 적당한 굵기 */
+    white-space: nowrap; /* 줄바꿈 방지 */
+    margin-right: auto; /* 오른쪽 여백 자동으로 설정 */
+    display: inline-block; /* 인라인 블록 요소로 설정 */
+}
+
+.hos_info h2, .hos_info p {
+    margin: 0; /* 기본 마진 제거 */
 }
 
 .hos_info .rating {
     font-size: 18px;
     color: #666; /* 평점 색상 */
     margin-top: 5px; /* 위쪽 여백 */
+    display: flex;
+    align-items: center;
+    gap: 10px;  /* 요소 사이의 간격 설정 */
 }
 
-.hos_info .address {
-    font-size: 16px;
-    color: #999; /* 주소 색상 */
-    margin-top: 10px; /* 위쪽 여백 */
+.hos_info .entType {
+    font-size: 15px;  /* 글자 크기 조정 */
+    color: #666;  /* 글자 색상 */
+    white-space: nowrap; /* 줄바꿈 방지 */
 }
 
-.actions .btn {
+.hos_info .entAddress {
+    padding-top: 10px;  /* 주소 정보와 상단 요소 사이에 패딩 추가 */
+    padding-bottom: 20px;
+    font-size: 15px;  /* 글자 크기 조정 */
+    color: #666;  /* 글자 색상 */
+}
+
+.actions .btn{
     background: #4CAF50; /* 버튼 색상 */
     color: white;
     border: none;
@@ -31,10 +59,16 @@
     margin-right: 10px; /* 오른쪽 여백 */
     cursor: pointer; /* 마우스 오버 포인터 */
     border-radius: 4px; /* 버튼 모서리 둥글게 */
+    font-family: Arial, sans-serif; /* 글꼴 지정 */
 }
 
-.actions .btn:hover {
+.actions .btn:hover{
     background: #45a049; /* 호버 시 버튼 색상 변경 */
+}
+
+li i {
+    color: #bbb; /* 밝은 회색으로 설정 */
+    margin-right: 10px; /* 아이콘과 텍스트 사이에 오른쪽 여백 추가 */
 }
 
 /* body */
@@ -152,17 +186,46 @@
     font-weight: bold; /* 글자 굵게 */
 }
 
-/* 별점 및 리뷰 날짜 스타일 */
 .review-details {
     font-size: 12px; /* 글자 크기 */
     color: #666; /* 글자 색상 */
     margin-bottom: 5px; /* 하단 여백 */
 }
 
-/* 리뷰 평점을 나타내는 별 스타일 */
+.review-details {
+    font-size: 12px; /* 글자 크기 */
+    color: #666; /* 글자 색상 */
+    margin-bottom: 5px; /* 하단 여백 */
+    display: flex;
+    align-items: center;
+    gap: 8px; /* span 요소들 간의 기본 간격 */
+}
+
 .review-stars {
+    display: inline-flex; /* 별들을 한 줄에 나란히 배치 */
+    gap: 0; /* 별 사이의 간격을 없앰 */
+    letter-spacing: -1px; /* 별 사이의 간격을 줄임 */
+}
+
+.review-stars span {
     color: gold; /* 별 색상 */
-    margin-right: 5px; /* 별 간 간격 */
+    margin-right: 0; /* 별 간 간격 없앰 */
+}
+
+/*리뷰가 바어있을떄 */
+.no-review {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    height: 100%; /* 필요에 따라 높이 설정 */
+}
+
+.no-review img {
+    margin-bottom: 20px;
+    max-width: 150px;
+    height: auto;
 }
 
 /* OCR인증 팝업 */
@@ -176,21 +239,26 @@
     height: 100%;     /* 높이 전체 차지 */
     background-color: rgba(0,0,0,0.5); /* 반투명 검은 배경 */
     z-index: 1000;    /* 다른 요소들 위에 표시 */
-    overflow-y: auto; /* 필요시 내부 스크롤 활성화 */
     padding: 20px;    /* 패딩 추가 */
 }
 
 /* 모달 팝업 스타일 */
-.modal {
-    display: flex; /* 기본적으로 숨김 */
-    position: fixed; /* 화면 위치 고정 */
-    z-index: 1; /* 모든 내용 위에 표시 */
-    left: 0;
-    top: 0;
-    width: 100%; /* 전체 너비 */
-    height: 100%; /* 전체 높이 */
-    overflow: auto; /* 스크롤바 자동 생성 */
-    background-color: white; /* 흐린 배경 */
+.modal{
+    /*display: flex; !* 기본적으로 숨김 *!*/
+    /*position: fixed; !* 화면 위치 고정 *!*/
+    /*z-index: 1; !* 모든 내용 위에 표시 *!*/
+    /*left: 0;*/
+    /*top: 0;*/
+    /*width: 100%; !* 전체 너비 *!*/
+    /*height: 100%; !* 전체 높이 *!*/
+    /*overflow: auto; !* 스크롤바 자동 생성 *!*/
+    /*background-color: white; !* 흐린 배경 *!*/
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+    padding: 20px;
 }
 
 .modal-content {
@@ -203,13 +271,26 @@
 
 /* 내용 박스 스타일 */
 .additional-content {
-     background-color: white; /* 배경색 */
-     padding: 20px;          /* 패딩 */
-     border-radius: 10px;    /* 모서리 둥글게 */
-     box-shadow: 0 0 15px rgba(0,0,0,0.2); /* 그림자 효과 */
+    position: relative;  /* 자식 요소의 절대 위치를 위해 상대 위치 설정 */
+    background-color: white;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
 }
 
-.ocrSubmitBtn {
+.closeBtn{
+    position: absolute;  /* 절대 위치 설정 */
+    top: 10px;           /* 상단에서 20px의 위치 */
+    right: 30px;         /* 우측에서 20px의 위치 */
+    font-size: 36px;     /* 폰트 크기 */
+    color: darkgrey;          /* 폰트 색상 */
+    cursor: pointer;     /* 마우스 오버 시 포인터로 변경 */
+    font-weight: bold;   /* 글자 두께 굵게 */
+}
+
+.ocrSubmitBtn , .reviewSubmitBtn{
     display: block; /* 버튼을 블록 요소로 만들어 줄 전체를 차지하게 함 */
     width: 100%; /* 버튼의 너비를 부모 컨테이너의 100%로 설정 */
     padding: 12px 0; /* 상하 패딩을 12px로 설정 */
@@ -224,11 +305,11 @@
     transition: background-color 0.3s ease; /* 배경색 변경시 애니메이션 효과 */
 }
 
-.ocrSubmitBtn:hover {
+.ocrSubmitBtn:hover, .reviewSubmitBtn:hover{
     background-color: #367c39; /* 호버 시 버튼의 배경색을 어둡게 조정 */
 }
 
-.ocrSubmitBtn:active {
+.ocrSubmitBtn:active ,.reviewSubmitBtn:active{
     box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.2); /* 클릭 시 내부 그림자 효과를 추가하여 눌린 느낌을 줌 */
 }
 
@@ -238,17 +319,9 @@
     font-weight: bold;
 }
 
-.closeBtn1, .closeBtn2 {
-    position: absolute;  /* 절대 위치 설정 */
-    top: 20px;           /* 상단에서 20px의 위치 */
-    right: 40px;         /* 우측에서 20px의 위치 */
-    font-size: 36px;     /* 폰트 크기 */
-    color: darkgrey;          /* 폰트 색상 */
-    cursor: pointer;     /* 마우스 오버 시 포인터로 변경 */
-    font-weight: bold;   /* 글자 두께 굵게 */
-}
-
 /* 리뷰 폼 */
+
+/* 별 색상 */
 .star-rating {
     direction: rtl; /* 별을 오른쪽에서 왼쪽으로 배열 */
     font-size: 24px;
@@ -261,27 +334,37 @@
     cursor: pointer;
     font-size: 30px;
 }
+
 .star-rating > input:checked ~ label,
 .star-rating > input:checked ~ label ~ label {
     color: #4CAF50; /* 선택된 별 색상 */
 }
 
-#reviewForm {
-    max-width: 800px; /* 최대 너비 설정 */
-    width: 100%; /* 너비를 화면 크기에 맞추어 조절 */
-    margin: 20px auto; /* 상하 20px, 좌우 자동으로 중앙 정렬 */
-    padding: 20px;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    position: relative; /* 상대 위치 설정 추가 */
-    display: none; /* 기본적으로 숨김 */
+/* 리뷰 조정 */
+
+/* 제목 스타일 조정 */
+
+/* 설명 스타일 조정 */
+.reviewForm h2 {
+    font-size: 40px; /* 제목 크기 */
+    margin: 0; /* 여백 제거 */
+    padding: 0; /* 패딩 제거 */
+    line-height: 1.2; /* 줄 간격 */
+}
+
+/* 설명 스타일 조정 */
+.reviewForm span {
+    font-size: 15px; /* 설명 텍스트 크기 */
+    margin: 0; /* 여백 제거 */
+    padding: 0; /* 패딩 제거 */
+    display: block; /* 블록 요소로 변경 */
 }
 
 
-
-
+/* 별점 폼 스타일 조정 */
+.reviewForm .form-group {
+    margin-bottom: 20px; /* 폼 요소 간의 간격 조정 */
+}
 
 
 

@@ -7,7 +7,14 @@
         <class>com.sh.pettopia.choipetsitter.entity.Reservation</class>
         <class>com.sh.pettopia.choipetsitter.entity.Sitting</class>
         <class>com.sh.pettopia.choipetsitter.entity.PetSitterReview</class>
-        <class>com.sh.pettopia.choipetsitter.entity.Pay</class>
+        <class>com.sh.pettopia.choipetsitter.entity.Order</class>
+
+
+        <!-- 회원 클래스 등록  - 테스트 코드 실행시, 필요 -->
+        <class>com.sh.pettopia.Hojji.user.User</class>
+        <class>com.sh.pettopia.Hojji.user.Authority</class>
+        <class>com.sh.pettopia.Hojji.user.member.entity.SitterStatus</class>
+        <class>com.sh.pettopia.Hojji.user.member.entity.Member</class>
 
 
         <properties>

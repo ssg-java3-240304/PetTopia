@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.w3c.dom.ls.LSOutput;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -21,7 +20,7 @@ public class MemberRegistRequestDto {
     // Ex) 프로필이미지가 html 상으로 name = "profileImage" 이면 Dto에서도 변수 명이 profileImage여야 한다.
 
     // 프로필 이미지
-    private String profileImage;
+    private String profileUrl;
 
     // 본명
     private String name;
@@ -43,14 +42,13 @@ public class MemberRegistRequestDto {
 
     // 생년 월일
     private LocalDate birth;
-    private Timestamp timestamp;
 
     // 주소
     private String address;
 
     public Member toMember() {
         return Member.builder()
-                .profileImage(this.profileImage)
+                .profileImage(this.profileUrl)
                 .name(this.name)
                 .email(this.email)
                 .nickName(this.nickName)

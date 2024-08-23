@@ -3,10 +3,7 @@ package com.sh.pettopia.enterprise.repository;
 import com.sh.pettopia.enterprise.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-
 import java.util.List;
-
 
 public interface ReviewRepository extends JpaRepository<Review, Long> {
 
@@ -36,6 +33,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             r.entId = :entId
     """)
     Double findAverageRatingByEntId(Long entId);
+
+    // 리뷰 등록할 업체와 영수증의 업체가 동일한지 검사
 
 }
 

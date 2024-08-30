@@ -55,7 +55,8 @@ public class MyPageController {
         log.debug("authPrincipal = {}", authPrincipal);
         Member member = authPrincipal.getMember();
 
-        // 내가 예약한 내역이 여러개일 수 있다
+        // 내가 예약한 내역+결제가 여러개일 수 있다
+        List<Order> orderList=orderService.findAllByOrderByPayDate();
         List<Reservation> reservationList=reservationService.findByMemberIdAndReservationStatusNotOk(authPrincipal.getMember().getEmail());
         List<ReservationDto> reservationDtoList=new ArrayList<>();
         for(Reservation reservationEntity : reservationList)
@@ -63,10 +64,19 @@ public class MyPageController {
             // entity -> dto로 바꾸는 과정
             reservationDtoList.add(new ReservationDto().entityToDto(reservationEntity));
         }
+        for(Order order:orderList)
+        {
+            for(ReservationDto reservationDto:reservationDtoList)
+            {
+                if(reservationDto.getPartnerOrderId() == order.getPartnerOrderId()) {
+                    reservationDto.setPayStatus(order.isPayStatus());
+                }
+            }
+        }
         log.info("reservationList = {}", reservationList);
 
         // 현재 나의 예약을 실행중인 서비스가 여러개일 수 있다
-        List<Sitting> sittingList = sittingService.findAllBySittingStatusIsReadyOrStart(authPrincipal.getMember().getEmail());
+        List<Sitting> sittingList = sittingService.findAllBySittingStatusIsReadyOrStartOrWaitingMemberCheck(authPrincipal.getMember().getEmail());
         List<SittingDto> sittingDtoList = new ArrayList<>();
         for (Sitting sittingEntity : sittingList) {
             // entity -> dto로 바꾸는 과정
@@ -75,27 +85,19 @@ public class MyPageController {
         log.info("sittingList = " + sittingList);
 
         // 돌봄 서비스가 완료 및 완료 승인을 대기 하는 리스트가 존재한다
-        List<Sitting> completeSittingList = sittingService.findAllBySittingStatusIsComplete(authPrincipal.getMember().getEmail());
+        List<Sitting> completeSittingList = sittingService.findAllBySittingStatusIsMemberCheck(authPrincipal.getMember().getEmail());
         List<SittingDto> completeSittingDtoList = new ArrayList<>();
         for (Sitting sittingEntity : completeSittingList) {
             completeSittingDtoList.add(new SittingDto().entityToDto(sittingEntity));
         }
 
         log.info("completeSittingEntityList = " + completeSittingList);
+        log.info("completeSittingList = " + completeSittingList);
         log.info("completeSittingDtoList = " + completeSittingDtoList);
-        
-        List<Order> orderList=orderService.findAllByOrderByPayDate();
-        List<OrderDto> orderDtoList=new ArrayList<>();
-        for(Order order:orderList)
-        {
-            orderDtoList.add(new OrderDto().entityToDto(order));
-        }
-        log.info("orderList = {}", orderList);
 
         model.addAttribute("reservationDtoList", reservationDtoList); // 예약 중인 속성
         model.addAttribute("sittingDtoList", sittingDtoList); // 돌봄 진행중인 속성
         model.addAttribute("completeSittingDtoList", completeSittingDtoList); // 돌봄 승인 대기 및 완료된 속성
-        model.addAttribute("orderDtoList", orderDtoList); // 내가 결제한 내역
         model.addAttribute("member", member);
 
 

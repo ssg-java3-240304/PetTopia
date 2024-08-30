@@ -16,7 +16,7 @@
                         <div class="header-text">
                             <h1 class="mb-0 find-sitter">돌봐주세요</h1>
                             <p>원하는 조건으로 펫시터를 구해보세요!</p>
-                            <a th:href="@{/petsitterfinder/careregistrationform}" class="findSitterButton">돌봐주세요 게시글 등록하러 가기</a>
+                            <a th:href="@{/petsitterfinder/careregistrationform}" class="find-Sitter-Button">돌봐주세요 게시글 등록하러 가기</a>
                         </div>
                         <img src="/svg/brownDog.svg" class="main-image" style="margin-top: 10px">
                     </div>
@@ -37,7 +37,7 @@
                             <div class="pt-3 px-3 pb-4">
                                 <div>
                                     <span id="address" th:text="'주소 : ' + ${list.address}"></span><br>
-                                    <span id="petName" th:text="'이름 : ' + ${list.petName}"></span><br>
+                                    <span id="petName" th:text="'댕댕이 이름 : ' + ${list.petName}"></span><br>
                                     <span id="startDate" th:text="'요청 시작 날짜 : ' + ${list.startDate}"></span><br>
                                     <span id="endDate" th:text="'요청 종료 날짜 : ' + ${list.endDate}"></span>
                                 </div>

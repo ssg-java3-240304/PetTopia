@@ -105,12 +105,9 @@ public class MyPageController {
 
 
         // 박태준 추가 (돌봐주세요)
-
-        PetSitter petSitter = petSitterService.findOneByPetSitter(authPrincipal.getMember().getEmail());
-        log.debug("petSitter = {}", petSitter);
-        List<ReservationResponseDto> responseDto = careRegistrationService.findReservationByPetSitter(petSitter);
-        log.debug("responseDto = {}", responseDto);
-        model.addAttribute("pleaseCare", responseDto);
+        List<ReservationResponseDto> reservation = careRegistrationService.findReservationByMemberId(authPrincipal.getMember().getId());
+        log.info("reservation = {}", reservation);
+        model.addAttribute("pleaseCare", reservation);
 
     }
 
@@ -182,6 +179,7 @@ public class MyPageController {
         dto.setId(memberId);
         log.debug("dto = {}",dto);
         myPageService.regist(dto);
+
         redirectAttributes.addFlashAttribute("message", "신청이 완료되었습니다!");
         return "redirect:/mypage/mypage";
     }

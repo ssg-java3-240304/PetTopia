@@ -4,10 +4,7 @@ import com.sh.pettopia.Hojji.auth.principal.AuthPrincipal;
 import com.sh.pettopia.choipetsitter.dto.*;
 import com.sh.pettopia.choipetsitter.entity.*;
 import com.sh.pettopia.choipetsitter.repository.PetSitterReviewRepository;
-import com.sh.pettopia.choipetsitter.service.PetSitterReviewService;
-import com.sh.pettopia.choipetsitter.service.PetSitterService;
-import com.sh.pettopia.choipetsitter.service.ReservationService;
-import com.sh.pettopia.choipetsitter.service.SittingService;
+import com.sh.pettopia.choipetsitter.service.*;
 import com.sh.pettopia.kakaopay.dto.KakaoPayReadyResponse;
 import com.sh.pettopia.kakaopay.service.PayService;
 import com.sh.pettopia.ncpTest.FileDto;
@@ -17,6 +14,7 @@ import com.sh.pettopia.parktj.petsitterfinder.dto.ReservationResponseDto;
 import com.sh.pettopia.parktj.petsitterfinder.entity.ReservationByPetSitter;
 import com.sh.pettopia.parktj.petsitterfinder.service.CareRegistrationService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import lombok.extern.slf4j.Slf4j;
@@ -42,6 +40,7 @@ public class PetSitterController {
     // 박태준 추가
     private final CareRegistrationService careRegistrationService;
     private final PetSitterReviewRepository petSitterReviewRepository;
+    private final OrderService orderService;
 
 
     //여기서는 회원=펫시터이기 때문에, /registerprofile/{memeberId} 이렇게 와야한다 그러므로 dto에 memeberId가 온다
@@ -125,7 +124,7 @@ public class PetSitterController {
     }
 
     @GetMapping("/detail/{petSitterId}") // 일 시작 게시글 보여주는 핸들러 + 리뷰이미지까지 넣어야 한다
-    public String detail(@PathVariable String petSitterId, Model model) {
+    public String detail(@PathVariable("petSitterId") String petSitterId, Model model) {
         log.info("GET /petsitter/detail/{}", petSitterId);
         PetSitter petSitter = petSitterService.findOneByPetSitter(petSitterId);
         PetSitterRegisterDto dto = new PetSitterRegisterDto().entityToDto(petSitter);
@@ -182,15 +181,22 @@ public class PetSitterController {
         System.out.println(principal.getMember().getEmail());
         PetSitter petSitter = petSitterService.findOneByPetSitter(principal.getMember().getEmail());
         List<String> profileImg = new ArrayList<>();
+        List<String> licenseImg = new ArrayList<>();
         Set<String> petServiceList = new HashSet<>();
         Set<String> petSizeList = new HashSet<>();
 
         List<FileDto> fileDtoList = fileService.sitterDownImg(petSitter.getPetSitterId(), "imagesInPost");// 주소를/member/memberid가 들어가야 될 거같다
+        List<FileDto> licenseImages = fileService.sitterDownImg(petSitter.getPetSitterId(), "licenseImage");// 주소를/member/memberid가 들어가야 될 거같다
 
         for (FileDto fileDtoImageUrl : fileDtoList) {
             profileImg.add(fileDtoImageUrl.getUploadFileUrl());
         }
         System.out.println("profileImg = " + profileImg);
+
+        for (FileDto fileDtoImageUrl : licenseImages) {
+            licenseImg.add(fileDtoImageUrl.getUploadFileUrl());
+        }
+
         for (AvailableService service : petSitter.getAvailableService()) {
             petServiceList.add(service.getPetService());
         }
@@ -206,6 +212,7 @@ public class PetSitterController {
         PetSitterRegisterDto dto = new PetSitterRegisterDto().entityToDto(petSitter);
         log.info("dto = {}" , dto);
         dto.setPostImagesList(profileImg);
+        dto.setLicenseImages(licenseImg);
             model.addAttribute("dto", dto);
             model.addAttribute("petSize", petSizeList);
             model.addAttribute("petService", petServiceList);
@@ -245,9 +252,9 @@ public class PetSitterController {
             }
         }
 
-        if (!licenseFiles.isEmpty()) {
+        if (!CheckLicenseImageUrl.isEmpty()) {
             //파일들의 url을 List로 담아서 Dto->Entity할 때 넣는다
-            List<FileDto> fileDtoList = fileService.sitterUpFile(licenseFiles, principal.getMember().getEmail(), "licenseImage");
+            List<FileDto> fileDtoList = fileService.sitterUpFile(CheckLicenseImageUrl, principal.getMember().getEmail(), "licenseImage");
             for (FileDto fileDtoImageUrl : fileDtoList) {
                 imageUrl.add(fileDtoImageUrl.getUploadFileUrl());
             }
@@ -358,11 +365,19 @@ public class PetSitterController {
     }
 
     @ResponseBody
-    @PostMapping(value = "/removePostImage")
-    public void removePostImage(String fileNameWithExtension, @AuthenticationPrincipal AuthPrincipal principal) {
+    @PostMapping( "/removePostImage")
+    public void removePostImage(@RequestParam("fileNameWithExtension") String fileNameWithExtension, @AuthenticationPrincipal AuthPrincipal principal) {
         log.info("POST /petsitter/postImage");
         System.out.println("fileNameWithoutExtension = " + fileNameWithExtension);
         fileService.deleteImage(principal.getMember().getEmail(), "imagesInPost", fileNameWithExtension);
+    }
+
+    @ResponseBody
+    @PostMapping( "/removeLicenseImage")
+    public void removeLicenseImage( @RequestParam("licenseImage")String licenseImage, @AuthenticationPrincipal AuthPrincipal principal) {
+        log.info("POST /petsitter/removeLicenseImage");
+        System.out.println("fileNameWithoutExtension = " + licenseImage);
+        fileService.deleteImage(principal.getMember().getEmail(), "licenseImage", licenseImage);
     }
 
     @GetMapping("/petsittingmain")
@@ -407,7 +422,7 @@ public class PetSitterController {
     }
 
     @PostMapping("/reservationOk")
-    public String reservationOk(String partnerOrderId) {
+    public String reservationOk(@RequestParam("partnerOrderId") String partnerOrderId) {
         log.info("POST /petsitter/reservationOk");
 
         Reservation reservation = reservationService.findReservationByPartnerOrderId(partnerOrderId);
@@ -496,7 +511,7 @@ public class PetSitterController {
     }
 
     @PostMapping("/workstatus")
-    public String workStatus(String workStatus,String petSitterId){
+    public String workStatus(@RequestParam("workStatus") String workStatus,@RequestParam("petSitterId")String petSitterId){
         log.info("POST /petsitter/workStatus");
         log.info("workStatus = {}",workStatus);
         log.info("petSitterId = {}",petSitterId);
@@ -520,6 +535,15 @@ public class PetSitterController {
 
         return "redirect:/petsitter/registerpost";
     }
+    @PostMapping("/petsitterreservationcancel")
+    public String petSitterReservationCancel(String partnerOrderId){
+
+        log.info("POST /petsitter/petSitterReservationCancel");
+        payService.kakaoCancel(partnerOrderId);
+
+        return "redirect:/petsitter/schedule";
+    }
+
 
     @GetMapping("/review/{partnerOrderId}")
     public String review(@ModelAttribute SittingDto dto, Model model) {

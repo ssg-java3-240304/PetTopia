@@ -93,8 +93,8 @@
 ## 🎥 펫토피아의 시연영상 함께 보시죠!
 
 > 사진을 클릭하시면 해당 youtube 영상으로 이동합니다.
-https://youtu.be/VMqAk_KxjrQ
 
+<iframe width="640" height="360" src="https://youtu.be/VMqAk_KxjrQ" frameborder="0" gesture="media" allowfullscreen=""></iframe>
 <br/>
 <br/>
 <br/>

@@ -14,70 +14,64 @@ on:
     types:
       - closed
 
-env:
-  DOCKER_IMAGE_NAME: pettopia
-  EC2_HOST: 18.210.99.219
-  EC2_SSH_USER: ubuntu
-  PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
-
+# 위 이벤트 발생 시 실행될 작업들
 jobs:
-  build-and-push-docker:
-
+  build:
+    # VM의실행 환경 지정 => 우분투 최신 버전
     runs-on: ubuntu-latest
 
+    # 실행될 jobs를 순서대로 명시
     steps:
     - name: Checkout
       uses: actions/checkout@v3
 
-    - name: Set up JDK 17
+    # JDK 11 설치
+    - name: Set up JDK 11
       uses: actions/setup-java@v3
       with:
-        java-version: '17'
+        java-version: '11'
         distribution: 'temurin'
 
-    - name: Set up application.properties
-      run: echo "${{ secrets.APPLICATION }}" > ./src/main/resources/application.properties
+    # Gradle Build를 위한 권한 부여
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
 
-    # Gradle 실행 권한 부여
-    - name: Grant permission for gradlew
-      run: chmod +x ./gradlew
-
-    # Gradle Build (테스트 생략)
+    # Gradle Build (test 제외)
     - name: Build with Gradle
-      run: ./gradlew clean build -x test
-      
-    - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew clean build --exclude-task test
 
-    - name: Login to Docker Hub using Access Token
-      run: echo "${{ secrets.DOCKER_HUB_TOKEN }}" | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin
-
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ${{ env.DOCKER_IMAGE_NAME }}:latest
-      
-    - name: Push the Docker image
-      run: docker push ${{ env.DOCKER_IMAGE_NAME }}:latest
-
-
-  deploy-to-ec2:
-
-    needs: build-and-push-docker
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Deploy to EC2
-      uses: appleboy/ssh-action@master
+    # DockerHub 로그인
+    - name: DockerHub Login
+      uses: docker/login-action@v2
       with:
-        host: ${{ env.EC2_HOST }}
-        username: ${{ env.EC2_SSH_USER }}
-        key: ${{ env.PRIVATE_KEY }}
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
+    # Docker 이미지 빌드
+    - name: Docker Image Build
+      run: docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }} .
+
+    # DockerHub Push
+    - name: DockerHub Push
+      run: docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
+
+    # EC2 인스턴스 접속 및 애플리케이션 실행
+    - name: Application Run
+      uses: appleboy/ssh-action@v0.1.6
+      with:
+        host: ${{ secrets.EC2_HOST }}
+        username: ${{ secrets.EC2_USERNAME }}
+        key: ${{ secrets.EC2_KEY }}
+
         script: |
-          CONTAINER_ID=$(sudo docker ps -q --filter "publish=80-8080")
+          sudo docker kill ${{ secrets.PROJECT_NAME }}
+          sudo docker rm -f ${{ secrets.PROJECT_NAME }}
+          sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
+          sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
-          if [ ! -z "$CONTAINER_ID" ]; then
-            sudo docker stop $CONTAINER_ID
-            sudo docker rm $CONTAINER_ID
-          fi
-
-          sudo docker pull ${{ env.DOCKER_HUB }}
-          sudo docker run --name ${{ env.CONTAINER_NAME }} -d -p 80:8080 -e TZ=Asia/Seoul ${{ env.DOCKER_HUB }}
+          sudo docker run -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
+          --name ${{ secrets.PROJECT_NAME }} \
+          -e SPRING_DATASOURCE_URL=${{ secrets.DB_URL }} \
+          -e SPRING_DATASOURCE_USERNAME=${{ secrets.DB_USERNAME }} \
+          -e SPRING_DATASOURCE_PASSWORD=${{ secrets.DB_PASSWORD }} \
+          -d ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}

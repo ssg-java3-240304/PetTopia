@@ -15,7 +15,7 @@ on:
       - closed
 
 env:
-  DOCKER_IMAGE_NAME: cstangga
+  DOCKER_IMAGE_NAME: PetTopia
   EC2_HOST: 18.210.99.219
   EC2_SSH_USER: ubuntu
   PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}

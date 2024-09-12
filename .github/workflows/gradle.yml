@@ -71,7 +71,7 @@ jobs:
 
           sudo docker run -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
           --name ${{ secrets.PROJECT_NAME }} \
-          -e SPRING_DATASOURCE_URL=${{ secrets.PROD_DB_URL }} \
-          -e SPRING_DATASOURCE_USERNAME=${{ secrets.PROD_DB_USERNAME }} \
-          -e SPRING_DATASOURCE_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
+          # -e SPRING_DATASOURCE_URL=${{ secrets.PROD_DB_URL }} \
+          # -e SPRING_DATASOURCE_USERNAME=${{ secrets.PROD_DB_USERNAME }} \
+          # -e SPRING_DATASOURCE_PASSWORD=${{ secrets.PROD_DB_PASSWORD }} \
           -d ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}

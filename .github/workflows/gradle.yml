@@ -69,7 +69,7 @@ jobs:
           sudo docker rmi ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
           sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
 
-          sudo docker run -p ${{ secrets.PORT }}:${{ secrets.PORT }} \
+          sudo docker run -p ${{ secrets.EC2_PORT }}:${{ secrets.EC2_PORT }} \
           --name ${{ secrets.PROJECT_NAME }} \
           -e "SPRING_PROFILES_ACTIVE=prod" \
           -e SPRING_DATASOURCE_URL=${{ secrets.PROD_DB_URL }} \

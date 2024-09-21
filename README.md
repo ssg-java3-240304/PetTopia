@@ -34,7 +34,7 @@
 > 병원, 약국, 미용실 서비스는 영수증을 인증을 통한 후기만 제공되어 신뢰성을 보장합니다!<br/>
 > 우리의 프로젝트 **펫토피아** 함께 하실까요?
 
-<a href="http://www.pettopia.cloud/">![펫토피아 001](https://github.com/user-attachments/assets/6d1c3808-e84a-4b10-a74d-17c08c5ff019)</a>
+<a href="http://43.203.210.115:8080/">![펫토피아 001](https://github.com/user-attachments/assets/6d1c3808-e84a-4b10-a74d-17c08c5ff019)</a>
 </div>
 
 

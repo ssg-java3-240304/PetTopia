@@ -1,11 +1,11 @@
 package com.sh.pettopia.kakaopay.service;
 
-import com.sh.pettopia.choipetsitter.dto.ReservationDto;
-import com.sh.pettopia.choipetsitter.entity.Order;
-import com.sh.pettopia.choipetsitter.entity.Reservation;
-import com.sh.pettopia.choipetsitter.entity.ReservationStatus;
-import com.sh.pettopia.choipetsitter.repository.OrderRepository;
-import com.sh.pettopia.choipetsitter.repository.ReservationRepository;
+import com.sh.pettopia.petsitter.dto.ReservationDto;
+import com.sh.pettopia.petsitter.entity.Order;
+import com.sh.pettopia.petsitter.entity.Reservation;
+import com.sh.pettopia.petsitter.entity.ReservationStatus;
+import com.sh.pettopia.petsitter.repository.OrderRepository;
+import com.sh.pettopia.petsitter.repository.ReservationRepository;
 import com.sh.pettopia.kakaopay.dto.KakaoApproveResponse;
 import com.sh.pettopia.kakaopay.dto.KakaoCancelResponse;
 import com.sh.pettopia.kakaopay.dto.KakaoPayReadyResponse;

@@ -1,29 +1,23 @@
 
 package com.sh.pettopia.mypage.controller;
 
-import com.sh.pettopia.Hojji.auth.principal.AuthPrincipal;
-import com.sh.pettopia.Hojji.pet.entity.Pet;
-import com.sh.pettopia.Hojji.pet.service.PetService;
-import com.sh.pettopia.Hojji.user.member.entity.Member;
-import com.sh.pettopia.choipetsitter.dto.OrderDto;
-import com.sh.pettopia.choipetsitter.dto.PetSitterReviewDto;
-import com.sh.pettopia.choipetsitter.dto.ReservationDto;
-import com.sh.pettopia.choipetsitter.dto.SittingDto;
-import com.sh.pettopia.choipetsitter.entity.*;
-import com.sh.pettopia.choipetsitter.repository.ReservationRepository;
-import com.sh.pettopia.choipetsitter.service.*;
-import com.sh.pettopia.choipetsitter.service.OrderService;
-import com.sh.pettopia.choipetsitter.service.PetSitterReviewService;
-import com.sh.pettopia.choipetsitter.service.ReservationService;
-import com.sh.pettopia.choipetsitter.service.SittingService;
+import com.sh.pettopia.auth.principal.AuthPrincipal;
+import com.sh.pettopia.pet.service.PetService;
+import com.sh.pettopia.user.member.entity.Member;
+import com.sh.pettopia.petsitter.dto.ReservationDto;
+import com.sh.pettopia.petsitter.dto.SittingDto;
+import com.sh.pettopia.petsitter.entity.*;
+import com.sh.pettopia.petsitter.service.*;
+import com.sh.pettopia.petsitter.service.OrderService;
+import com.sh.pettopia.petsitter.service.PetSitterReviewService;
+import com.sh.pettopia.petsitter.service.ReservationService;
+import com.sh.pettopia.petsitter.service.SittingService;
 import com.sh.pettopia.mypage.dto.PesitterQualificationRegistRequestDto;
 import com.sh.pettopia.mypage.dto.ProfileUpdateRequestDto;
 import com.sh.pettopia.mypage.service.MyPageService;
-import com.sh.pettopia.parktj.petsitterfinder.dto.ReservationResponseDto;
-import com.sh.pettopia.parktj.petsitterfinder.entity.CareRegistration;
-import com.sh.pettopia.parktj.petsitterfinder.entity.ReservationByPetSitter;
-import com.sh.pettopia.parktj.petsitterfinder.service.CareRegistrationService;
-import com.sh.pettopia.parktj.petsitterfinder.dto.PetDetailsResponseDto;
+import com.sh.pettopia.petsitterfinder.dto.ReservationResponseDto;
+import com.sh.pettopia.petsitterfinder.service.CareRegistrationService;
+import com.sh.pettopia.petsitterfinder.dto.PetDetailsResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +28,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @Slf4j

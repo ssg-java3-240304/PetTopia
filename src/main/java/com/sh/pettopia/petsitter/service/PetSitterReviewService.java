@@ -1,0 +1,52 @@
+package com.sh.pettopia.petsitter.service;
+
+import com.sh.pettopia.petsitter.entity.PetSitterReview;
+import com.sh.pettopia.petsitter.repository.PetSitterReviewRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+@Transactional
+@RequiredArgsConstructor
+@Slf4j
+public class PetSitterReviewService {
+    private final PetSitterReviewRepository petSitterReviewRepository;
+
+    public List<PetSitterReview> findPetSitterReviewByPetSitterId(String petSitterId)
+    {
+        log.info("PetSitterReviewService / findPetSitterReviewByPetSitterId");
+        return petSitterReviewRepository.findPetSitterReviewByPetSitterId(petSitterId);
+    }
+
+    public Long countPetSitterReviewByPetSitterId(String petSitterId)
+    {
+        return petSitterReviewRepository.countPetSitterReviewByPetSitterId(petSitterId);
+    }
+
+
+    public PetSitterReview findByPetSitterId(String petSitterId) {
+        return petSitterReviewRepository.findByPetSitterId(petSitterId);
+    }
+
+    public void save(PetSitterReview petSitterReview) {
+         petSitterReviewRepository.save(petSitterReview);
+    }
+
+    public PetSitterReview findByPartnerOrderId(String partnerOrderId)
+    {
+        return petSitterReviewRepository.findByPartnerOrderId(partnerOrderId);
+    }
+
+    public void deleteReviewByPartnerOrderId(String partnerOrderId)
+    {
+        petSitterReviewRepository.deleteReviewByPartnerOrderId(partnerOrderId);
+    }
+
+    public List<PetSitterReview> findAll() {
+        return petSitterReviewRepository.findAll();
+    }
+}

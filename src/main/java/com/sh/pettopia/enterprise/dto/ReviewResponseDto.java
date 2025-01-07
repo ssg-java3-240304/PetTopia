@@ -1,6 +1,5 @@
 package com.sh.pettopia.enterprise.dto;
 
-import com.sh.pettopia.Hojji.user.member.entity.Member;
 import com.sh.pettopia.enterprise.entity.Review;
 import lombok.AllArgsConstructor;
 import lombok.Data;

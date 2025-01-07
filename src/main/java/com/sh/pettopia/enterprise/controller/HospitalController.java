@@ -1,7 +1,7 @@
 package com.sh.pettopia.enterprise.controller;
 
-import com.sh.pettopia.Hojji.auth.principal.AuthPrincipal;
-import com.sh.pettopia.Hojji.user.member.entity.Member;
+import com.sh.pettopia.auth.principal.AuthPrincipal;
+import com.sh.pettopia.user.member.entity.Member;
 import com.sh.pettopia.enterprise.dto.EnterpriseDetailResponseDto;
 import com.sh.pettopia.enterprise.dto.ReviewRegistDto;
 import com.sh.pettopia.enterprise.dto.ReviewResponseDto;

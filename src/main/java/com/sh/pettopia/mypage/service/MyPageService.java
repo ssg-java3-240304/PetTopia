@@ -1,10 +1,10 @@
 package com.sh.pettopia.mypage.service;
 
-import com.sh.pettopia.Hojji.user.admin.entity.PetsitterQualificationApplicationEntity;
-import com.sh.pettopia.Hojji.user.admin.repository.AdminRepository;
-import com.sh.pettopia.Hojji.user.member.entity.Member;
-import com.sh.pettopia.Hojji.user.member.entity.SitterStatus;
-import com.sh.pettopia.Hojji.user.member.repository.MemberRepository;
+import com.sh.pettopia.user.admin.entity.PetsitterQualificationApplicationEntity;
+import com.sh.pettopia.user.admin.repository.AdminRepository;
+import com.sh.pettopia.user.member.entity.Member;
+import com.sh.pettopia.user.member.entity.SitterStatus;
+import com.sh.pettopia.user.member.repository.MemberRepository;
 import com.sh.pettopia.mypage.dto.PesitterQualificationRegistRequestDto;
 import com.sh.pettopia.mypage.dto.ProfileUpdateRequestDto;
 import com.sh.pettopia.mypage.repository.MyPageRepository;

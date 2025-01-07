@@ -1,6 +1,6 @@
 package com.sh.pettopia.mypage.dto;
 
-import com.sh.pettopia.Hojji.user.admin.entity.PetsitterQualificationApplicationEntity;
+import com.sh.pettopia.user.admin.entity.PetsitterQualificationApplicationEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
